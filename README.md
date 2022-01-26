@@ -196,7 +196,51 @@ docker rm -f container_name
 To create ubuntu container<br>
 docker run --name myubuntu  -it ubuntu<br>
 
-Observation:  -it stands for interavtive mode. You have automatically entered into ubuntu bash
+Observation:  -it stands for interavtive mode. You have automatically entered into ubuntu bash<br>
+
+Scenario 1:<br>
+Start tomcat as a container and name it as "webserver". Perform port mapping and run this container in detached mode<br>
+
+docker run --name  webserver  -p 7070:8080  -d tomee<br>
+
+To access homepage of the tomcat container<br>
+Launch any browser:<br>
+public_ip_of_dockerhost:7070<br>
+
+----------------------------------------------------------
+Scenario 2:<br>
+Start jenkins as a container in detached mode , name is as "devserver", perform port mapping<br>
+
+docker run -d  --name  devserver  -p 9090:8080 jenkins<br>
+
+To access home page of jenkins ( In browser)<br>
+public_ip_of_dockerhost:9090<br>
+
+----------------------------------------------------------
+
+Scenario 3:<br>
+Start nginx as a container and name as "appserver", run this in detached mode ,   perform automatic port mapping<br> 
+
+Generally we pull the image and run the image<br>
+
+Instead of pulling, i directly used this command<br>  
+
+docker run --name  appserver  -P  -d  nginx<br> 
+( if image is not available, it perform pull operation automatically )<br>
+( Capital P  , will perform automatic port mapping )<br>
+
+-----------------------------------------------------------------------------
+To start mysql  as container, open interactive terminal in it, create a sample table.<br>
+
+docker run  --name  mydb  -d  -e MYSQL_ROOT_PASSWORD=sunil  mysql:5<br>
+To chech<br>
+docker container ls<br>
+
+I want to open bash terminal of  mysql<br>
+docker  exec   -it  mydb  bash<br>
+
+To connect to mysql database<br>
+mysql  -u  root  -p<br> 
 
 
 
