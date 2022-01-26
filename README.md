@@ -173,6 +173,33 @@ Working on containers
 
 --memory  	Used to specify the maximum amount of ram that the container can use 
 
+# Downloading the image and creating container:
+
+To download tomcat image<br>
+docker pull tomee<br>
+
+To check downloaded images<br>
+docker images<br>		
+
+TO create a container from an image<br>
+docker run --name mytomcat  -p   7070:8080   tomee<br>
+Note: If two containers are running at same port, inorder to avoid conflict while accessing the application we use "Port mapping". 
+
+
+# Stopping the container and removing the container
+To stop the container we use the command<br>
+docker stop container_name<br>
+
+To remove the container<br>
+docker rm -f container_name
+
+# Understanding detached mode and interactive mode
+To create ubuntu container<br>
+docker run --name myubuntu  -it ubuntu<br>
+
+Observation:  You have automatically entered into ubuntu
+
+
 
 
 
