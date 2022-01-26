@@ -207,7 +207,7 @@ To access homepage of the tomcat container<br>
 Launch any browser:<br>
 public_ip_of_dockerhost:7070<br>
 
-----------------------------------------------------------
+----------------------------------------------------------------------------<br>
 Scenario 2:<br>
 Start jenkins as a container in detached mode , name is as "devserver", perform port mapping<br>
 
@@ -216,7 +216,7 @@ docker run -d  --name  devserver  -p 9090:8080 jenkins<br>
 To access home page of jenkins ( In browser)<br>
 public_ip_of_dockerhost:9090<br>
 
-----------------------------------------------------------
+----------------------------------------------------------------------------<br>
 
 Scenario 3:<br>
 Start nginx as a container and name as "appserver", run this in detached mode ,   perform automatic port mapping<br> 
@@ -229,7 +229,7 @@ docker run --name  appserver  -P  -d  nginx<br>
 ( if image is not available, it perform pull operation automatically )<br>
 ( Capital P  , will perform automatic port mapping )<br>
 
------------------------------------------------------------------------------
+-----------------------------------------------------------------------------<br>
 To start mysql  as container, open interactive terminal in it, create a sample table.<br>
 
 docker run  --name  mydb  -d  -e MYSQL_ROOT_PASSWORD=sunil  mysql:5<br>
@@ -366,7 +366,7 @@ public_ip_dockerhost:5901<br>
 
 Password - secret<br>
 
-------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------<br>
 
 
 All the commands we learnt till date are adhoc commands.<br>
@@ -487,7 +487,7 @@ public_ip:5050<br>
 To stop both the containers<br>
 docker-compose stop<br>
 
--------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------<br>
 
 
 # Create a docker compose file for setting up LAMP architecture 
@@ -525,7 +525,7 @@ docker container ls<br>
 (Observation - we are unable to see the php container)<br>
 docker ps -a<br>
 
---------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------<br>
 Ex: Docker-compose file for setting up CI-CD Environment.<br>
 jenkins container is linked with two tomcat containers<br> 
 
@@ -546,7 +546,7 @@ services:<br>
   links:<br>
    - devserver:jenkins<br>
 
---------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------<br>
 
 
  prodserver:<br>
@@ -556,7 +556,7 @@ services:<br>
   links:<br>
    - devserver:jenkins<br>
 ...<br>
-------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------<br>
 docker rm -f $(docker ps -aq)<br>
 docker-compose up -d<br>
 docker container ls<br>
@@ -595,7 +595,7 @@ services:<br>
   links:<br>
    - hub:selenium<br>
 ...<br>
---------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------<br>
 docker-compose up -d<br>
 
 docker container ls<br>
@@ -606,7 +606,7 @@ Open VNC viewer<br>
 password: secret<br>
 
 
----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------<br>
 
 # Docker volumes
 
@@ -664,7 +664,7 @@ ls  ( we can see file1  file2 )<br>
 
 (Observe , the container is deleted but still  the data is persistant )<br>
 
---------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------<br>
 
 # Docker volume containers
 
@@ -708,6 +708,265 @@ Ctrl +p  Ctrl +q  ( container will still runs in background )<br>
 
 Lets Start another  centos as container<br>
 docker run --name  c3  -it  --volumes-from c2 centos<br> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Using docker file:<br>
+This is a simple text file, which uses  predefinied keywords for creating customized docker images.<br>
+Key words used in docker file  ( case sensitive )<br>
+
+1) FROM  --  used to specify the base image from which the docker file has to be created.<br>
+
+2) MAINTAINER -- This represents name of the organization or the author who created this docker file.<br>
+ 
+3) CMD   -- This is used to specify the initial command that should be executed when the container starts.<br>
+
+4) ENTRYPOINT - used to specify the default process that should be executed when container starts.
+It can also be used for accepting arguments from the CMD instruction.<br>
+
+5) RUN  -- Used for running linux commands within the container. It is generally helpful for installing the software in the container.<br>
+
+6) USER  --      used to specify the default user who should login into the container.<br>
+
+7) WORKDIR --   Used to specify default working directory in the container<br>
+
+8) COPY  --  Copying the files from the host machine to the container.<br>
+
+9) ADD  -- Used for copying files  from host to container, it can also be used for downloading files from remote servers.<br>
+
+10) ENV  --  used for specifying the environment variables that should be passed to the container.<br>
+
+EXPOSE -- Used to specify the internal port of the container<br>
+VOLUME  --  used to specify the default volume that should be attached to the container.<br>
+LABEL  --  used for giving label to the container<br>
+STOPSIGNAL  -- Used to specify the key sequences that have to be passed in order to stop the container.<br>
+
+--------------------------------------------------------------------------------------------------------------------------<br>
+
+
+Create a dockerfile by taking nginx as the base image and specify the maintainer as logiclabs. Construct an image from the dockerfile.
+
+Creating customized docker images by using docker file.<br>
+
+$ sudo su -<br>
+vim dockerfile<br>
+
+FROM nginx<br>
+MAINTAINER logiclabs<br>
+
+
+
+TO build an image from the dockerfile<br>
+docker build -t  mynginx .<br>
+
+ (t stands for tag, .  stands for current working dir mynginx is the new image name )<br>
+
+
+When ever i start my container, i want a program to get executed.<br>
+
+vim dockerfile<br>
+
+FROM centos<br>
+MAINTAINER logiclabs<br>
+CMD ["date"]<br>
+
+
+To build an image from the dockerfile<br>
+docker build -t  mycentos  . <br>
+
+TO see the image<br>
+docker images<br>
+
+Running conainer from the image<br>
+docker run -it   mycentos<br>
+
+
+
+In one docker file, we can have one CMD instruction. If we give two  CMD instruction, it executes the latest one
+Lets try<br>
+
+
+
+vim dockerfile<br>
+FROM centos<br>
+MAINTAINER logiclabs<br>
+CMD ["date"]<br>
+CMD ["ls", "-la"]<br>
+
+docker build -t  mycentos . <br>
+
+docker run -it   mycentos<br>
+( Observation, we get ls -la output )<br>
+
+---------------------------------------------------------------------------------------------------------------<br>
+In ubuntu container, I want to install git in it.<br>
+
+
+Lets remove the docker file<br>
+rm dockerfile<br>
+#  vim dockerfile<br>
+
+FROM ubuntu<br>
+MAINTAINER logiclabs<br>
+RUN apt-get update<br>
+RUN apt-get install -y git<br>
+
+
+Note:  CMD  -- will run  when container starts.<br>
+       RUN  --  will executed when image is created.<br>
+
+
+docker build -t  myubuntu . <br>
+
+Lets see the images list and space consumed by  our  image<br>
+docker images<br>
+
+docker run -it   myubuntu<br>
+ git  --version<br>
+ exit<br>
+
+
+---------------------------------------------------------------------------------------------------------<br>
+
+Lets perform version controlling  in docker file
+---------------------------------------------------------
+
+
+# mkdir  docker 
+# mv dockerfile  docker
+# cd docker
+# ls
+
+
+docker# git init
+docker# git status  
+docker# git add .
+
+docker# git commit  -m "a"
+
+( we get error we need to config git)
+docker# git config --global user.name "sunildevops77"
+docker# git config --global user.email "sunildevops77@gmail.com"
+
+Now, run the above commit command  ( git commit )
+
+docker# vim dockerfile  ( lets make some changes add another RUN command )
+
+FROM ubuntu
+MAINTAINER logiclabs
+
+RUN apt-get update
+RUN apt-get install -y git
+RUN apt-get install -y default-jdk
+
+:wq
+
+docker# git add .
+docker# git commit  -m "b"
+
+Now lets see the docker file
+# vim dockerfile  ( we see the latest one )
+
+Now, I want to have previous version
+# git log  --oneline  (  to see the list of all the commits)
+
+We want to move to "a" commit  ( take note of commit id )
+
+# git reset --hard  10841c3
+
+
+
+
+Now lets see the docker file
+# vim dockerfile  ( we see the old one )
+
++++++++++++++++++++++++++++++++++++
+
+
+
+Cache busting
+------------------
+Whenever an image is build from a dockerfile, docker reads its memory and checks which instructions were already executed. 
+These steps will not be reexecuted. 
+It will execute only the latest instructions. This is a time saving mechanism provided by docker. 
+
+But, the disadvantage is, we can end up installing software packages  from a repository which is updated long time back. 
+
+
+Ex:
+
+# cd docker
+# vim dockerfile
+
+Lets just add one more instruction
+
+FROM ubuntu
+MAINTAINER logiclabs
+
+RUN apt-get update
+RUN apt-get install -y git
+RUN apt-get install -y tree                 
+
+
+:wq
+
+
+Lets build an image
+# docker build -t myubuntu  .
+
+
+( Observe the output,  Step 2, 3, 4 is using cache.  Only step 5 is executed freshly )
+
+Advantage: time saving mechanism
+
+
+
+Disadvantage : Lets say, you are running after 4 months, We are installing tree from apt which is updated long time back. )
+
+
+TO avoid this disadvanatge we use cache busting
+-----------------------------------------------------
+Note: cache busting is implemented using && symbol.
+Which ever statement in the docker file has &&  will be re-executed. 
+
+# vim dockerfile
+
+FROM ubuntu
+MAINTAINER logiclabs
+
+RUN apt-get update && apt-get install -y git tree
+
+:wq
+
+Lets build an image
+# docker build -t myubuntu .
+
+( Observe the output, step 3  - It is not using cache )
+
 
 
 
