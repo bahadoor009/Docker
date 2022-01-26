@@ -43,13 +43,13 @@ In comparison to the traditional virtualization functionalities of hypervisors, 
 # Understanding Docker Terminologies
 We should be comformatable with four terms:<br>
 
-1) Docker Images:<br>   
-Combinations of binaries / libraries which are necessary for one software application.<br>
-2) Docker Containers:<br>  
+1) Docker Images:<br>
+Combinations of binaries/libraries which are necessary for one software application.<br>
+3) Docker Containers:<br>
 When image is installed and in comes into running condition, it is called container.<br>
-3) Docker Host:<br>
+5) Docker Host:<br>
 Machine on which docker is installed, is called as Docker host.<br>
-4) Docker Client:<br>
+7) Docker Client:<br>
 Terminal used to run docker run commands ( Git bash )<br>
 
 On linux machine, git bash will work like docker client.
@@ -73,13 +73,13 @@ Working on Images :<br>
    docker push <image_name><br> 
 
 5) To tag an image<br> 
-docker tag   <image_name>   ipaddress_of_local_registry:5000/image_name<br> 
+docker tag <image_name> ipaddress_of_local_registry:5000/image_name<br> 
 
 6) To build an image from a customised container<br> 
-  docker   <commit  container_name/container_id>     <new_image_name><br> 
+  docker commit container_name/container_id>  <new_image_name><br> 
 
 7) To create an image from docker file<br> 
-   docker build -t    <new_image_name><br> 
+   docker build -t  <new_image_name><br> 
 
 8) To search for a docker image<br> 
    docker search <image_name><br> 
@@ -94,13 +94,13 @@ docker tag   <image_name>   ipaddress_of_local_registry:5000/image_name<br>
    docker  container  ls<br> 
 
 11) To see the list of running and stopped containers<br> 
-    docker   ps -a<br> 
+    docker ps -a<br> 
 
 12) To start a container<br> 
-    docker  start  container_name/container_id<br> 
+    docker start container_name/container_id<br> 
 
 13) To stop a running container<br> 
-    docker stop   container_name/container_id<br> 
+    docker stop  container_name/container_id<br> 
 
 14) To restart a running container<br> 
    docker restart container_name/container_id<br> 
