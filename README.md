@@ -428,3 +428,329 @@ docker-compose  --version<br>
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Create a docker compose file for setting up dev environment.
+
+mysql container is linked with wordpress container.<br>
+vim docker-compose.yml  (Name of the file should be docker-compose.yml)<br>
+
+version: '3'<br>
+
+services:<br>
+ mydb:<br><br>
+  image: mysql:5<br>
+  environment:<br>
+   MYSQL_ROOT_PASSWORD: bahadoor<br>
+
+ mysite:<br>
+  image: wordpress<br>
+  ports:<br>
+   - 5050:80<br>
+  links:<br>
+   - mydb:mysql<br>
+...<br>
+
+
+Lets remove all the running container<br>
+docker rm -f $(docker ps -aq)<br>
+
+How to start the above services from dockerfile<br>
+docker-compose  up<br>
+
+We got lot of logs coming on the screen. to avoid it we use -d  option<br>  
+
+docker-compose stop<br>
+
+Remove the container
+docker rm -f $(docker ps -aq)<br>
+ 
+docker-compose up  -d<br>
+
+To check wordpress<br>
+public_ip:5050<br>
+To stop both the containers<br>
+docker-compose stop<br>
+
+-------------------------------------------------------------------------------------------------------------------
+
+
+# Create a docker compose file for setting up LAMP architecture 
+
+vim docker-compose.yml<br>
+
+---<br>
+version: '3'<br>
+
+services:<br>
+ mydb:<br>
+  image: mysql:5<br>
+  environment:<br>
+   MYSQL_ROOT_PASSWORD: bahadoor<br>
+
+ apache:<br>
+  image: tomee<br>
+  ports:<br>
+   - 6060:8080<br>
+  links:<br>
+   - mydb:mysql<br>
+
+
+ php:<br>
+  image: php<br>
+  links:<br>
+   - mydb:mysql<br>
+   - apache:tomcat<br>
+...<br>
+
+docker-compose up -d<br>
+
+To see the list of the containers<br>
+docker container ls<br>
+(Observation - we are unable to see the php container)<br>
+docker ps -a<br>
+
+--------------------------------------------------------------------------------------------------------------
+Ex: Docker-compose file for setting up CI-CD Environment.<br>
+jenkins container is linked with two tomcat containers<br> 
+
+vim docker-compose.yml<br>
+
+---<br>
+version: '3'<br>
+services:<br>
+ devserver:<br>
+  image: jenkins/jenkins<br>
+  ports:<br>
+   - 7070:8080<br>
+
+ qaserver:<br>
+  image: tomee<br>
+  ports:<br>
+   - 8899:8080<br>
+  links:<br>
+   - devserver:jenkins<br>
+
+--------------------------------------------------------------------------------------------------------
+
+
+ prodserver:<br>
+  image: tomee<br>
+  ports:<br>
+   - 9090:8080<br>
+  links:<br>
+   - devserver:jenkins<br>
+...<br>
+------------------------------------------------------------------------------------------------------------
+docker rm -f $(docker ps -aq)<br>
+docker-compose up -d<br>
+docker container ls<br>
+
+To check:<br>
+public_ip:7070  (To check jenkins)<br>
+public_ip:8899 (Tomcat  qa server)<br>
+public_ip:9090 (Tomcat  prod server)<br>
+
+
+Docker-compose file to set up testing environment.<br>
+selenium  hub container is linked with two node containers.<br>
+
+
+vim docker-compose.yml<br>
+
+---<br>
+version: '3'<br>
+services:<br>
+ hub:<br>
+  image: selenium/hub<br>
+  ports:<br>
+   - 4444:4444<br>
+
+ chrome:<br>
+  image: selenium/node-chrome-debug<br>
+  ports:<br>
+   - 5901:5900<br>
+  links:<br>
+   - hub:selenium<br>
+
+ firefox:<br>
+  image: selenium/node-firefox-debug<br>
+  ports:<br>
+   - 5902:5900<br>
+  links:<br>
+   - hub:selenium<br>
+...<br>
+--------------------------------------------------------------------------------------------------
+docker-compose up -d<br>
+
+docker container ls<br>
+
+As it is GUI container, we can access using VNC viewer<br>
+Open VNC viewer<br>
+52.77.219.115:5901<br>
+password: secret<br>
+
+
+---------------------------------------------------------------------------------------------------
+
+# Docker volumes
+
+Docker containers are  ephemeral (temporary). Where as the data processed by the container should be permanent. Generally, when a container is deleted all its data will be lost.
+To preserve the data, even after deleting the container, we use volumes.
+
+Volumes are of two types<br>
+1) Simple docker volumes<br>
+2) Docker volume containers ( Sharable volume)<br>
+
+
+
+
+Simple docker volumes<br>
+---------------------
+These volumes are used only when we want to access the data, even after the container is deleted. But this data cannot be shared with other containers.
+
+
+
+Usecase<br>
+1) Create a directory called /data ,<br>  
+start centos as container and mount /data as volume.<br> 
+Create files in mounted volume in centos container,<br>
+exit from the container and delete the container. Check if the files are still available.<br>
+
+
+
+
+Lets create a folder  with the name<br>  
+mkdir  /data<br>
+
+docker run --name c1 -it -v /data centos  (v option is used to attach volume)<br>
+
+ls  ( Now, we can see the data folder also in the container)<br>
+
+cd data<br>
+touch file1   file2<br>
+ls<br>
+exit  (To come out of the container)<br>
+docker inspect c1<br>
+
+We can see under mounts "data" folder it located in the host machine.<br>
+Copy the path<br>
+
+
+/var/lib/docker/volumes/c5c85f87fdc3b46b57bb15f2473786fe7d49250227d1e9dc537bc594db001fc6/_data<br>
+
+Now, lets delete te container<br>
+docker rm -f c1<br>
+
+After deleting the container, lets go to the location of the data folder<br>
+
+cd /var/lib/docker/volumes/d867766f70722eaf8cba651bc1d64c60e9f49c5b1f1ebb9e781260f777f3c7e8/_data<br>
+ls  ( we can see file1  file2 )<br>
+
+(Observe , the container is deleted but still  the data is persistant )<br>
+
+--------------------------------------------------------------------------------------------------------------------
+
+# Docker volume containers
+
+These are also known as reusable volume. The volume used by one container can be shared with other containers. Even if all the containers are deleted, data will still be available on the docker host.
+
+Ex:<br>
+sudo su -<br>
+
+Lets create a directory      /data<br>
+mkdir  /data<br> 
+
+Lets Start  centos as container<br>
+docker run --name  c1  -it  -v /data centos<br> 
+ls  ( we can see the list of files and dir in centos )<br>
+
+
+cd data<br>
+ls  ( currently we have no files )<br>
+
+Lets create  some files<br>
+touch file1  file2  ( These two files are available in c1 container)<br>
+
+Comeout of the container without exit<br>
+Ctrl +p  Ctrl +q  ( container will still runs in background )<br>
+
+
+Lets Start another  centos as container ( c2 container should use the same volume as c1)<br>
+docker run --name  c2  -it  --volumes-from c1  centos<br> 
+
+
+
+cd data<br>
+ls  ( we can see the files created by c1 )<br>
+
+Lets create some more files<br>
+touch file3  file4<br>
+ls  ( we see 4 files )<br>
+
+Comeout of the container without exit<br>
+Ctrl +p  Ctrl +q  ( container will still runs in background )<br>
+
+Lets Start another  centos as container<br>
+docker run --name  c3  -it  --volumes-from c2 centos<br> 
+
+
+
+cd data<br>
+ls  ( we can see 4 files )<br>
+touch file5  file6<br>
+ls<br>
+
+Comeout of the container without exit<br>
+Ctrl +p  Ctrl +q  ( container will still runs in background )<br>
+
+Now, lets connect to any container which is running in the background<br>
+docker attach  c1<br>
+ls  ( you can see all the files )<br>
+exit<br>
+
+Identify the mount location<br>
+$ docker inspect  c1<br>
+( search for the mount section )<br>
+
+Take a note of the source path<br>
+
+/var/lib/docker/volumes/e22a9b39372615727b964151b6c8108d6c02b13114a3fcce255df0cee7609e15/_data<br>
+
+
+
+Lets remove all the container<br>
+docker rm -f  c1  c2  c3
+
+Lets go to the source path<br>
+cd /var/lib/docker/volumes/e22a9b39372615727b964151b6c8108d6c02b13114a3fcce255df0cee7609e15/_data<br>
+ls  ( we can see all the files )<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
