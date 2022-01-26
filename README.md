@@ -43,18 +43,19 @@ In comparison to the traditional virtualization functionalities of hypervisors, 
 # Understanding Docker Terminologies
 We should be comformatable with four terms:<br>
 
-1) Docker Images<br>   
+1) Docker Images:<br>   
 Combinations of binaries / libraries which are necessary for one software application.<br>
-2) Docker Containers<br>  
+2) Docker Containers:<br>  
 When image is installed and in comes into running condition, it is called container.<br>
-3) Docker Host<br>
+3) Docker Host:<br>
 Machine on which docker is installed, is called as Docker host.<br>
-4) Docker Client<br>
+4) Docker Client:<br>
 Terminal used to run docker run commands ( Git bash )<br>
 
 On linux machine, git bash will work like docker client.
 
 # Listing out important commands in Docker
+
 Docker Commands<br>
 Working on Images :<br>
 1) To download a docker image<br> 
@@ -179,7 +180,7 @@ docker pull tomee<br>
 To check downloaded images<br>
 docker images<br>		
 
-TO create a container from an image<br>
+To create a container from an image<br>
 docker run --name mytomcat  -p   7070:8080   tomee<br>
 Note: If two containers are running at same port, inorder to avoid conflict while accessing the application we use "Port mapping". 
 
@@ -195,7 +196,7 @@ docker rm -f container_name
 To create ubuntu container<br>
 docker run --name myubuntu  -it ubuntu<br>
 
-Observation:  You have automatically entered into ubuntu
+Observation:  -it stands for interavtive mode. You have automatically entered into ubuntu bash
 
 
 
