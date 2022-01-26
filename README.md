@@ -33,145 +33,143 @@
 Docker is an open platform for developing, shipping, and running applications. Docker enables you to separate your applications from your infrastructure so you can deliver software quickly. With Docker, you can manage your infrastructure in the same ways you manage your applications. By taking advantage of Docker’s methodologies for shipping, testing, and deploying code quickly, you can significantly reduce the delay between writing code and running it in production.
 
 # Containerization vs virtualization
-Virtualization -- Fixed hardware allocation.
-Containerization - No Fixed Hardware
-Process isolation ( Dependency on os is removed )
+Virtualization -- Fixed hardware allocation.<br>
+Containerization - No Fixed Hardware<br>
+Process isolation ( Dependency on os is removed )<br>
 
 # Advantages of Containerization
 In comparison to the traditional virtualization functionalities of hypervisors, Docker containers eliminate the need for a separate guest operating system for every new virtual machine. Docker implements a high-level API to provide lightweight containers that run processes in isolation. A Docker container enables rapid deployment with minimum run-time requirements. It also ensures better management and simplified portability. This helps developers and operations team in rapid deployment of an application.
 
 # Understanding Docker Terminologies
-We should be comformatable with four terms:
+We should be comformatable with four terms:<br>
 
-1) Docker Images   
-Combinations of binaries / libraries which are necessary for one software application.
-2) Docker Containers  
-When image is installed and in comes into running condition, it is called container.
-3) Docker Host
-Machine on which docker is installed, is called as Docker host.
-4) Docker Client
-Terminal used to run docker run commands ( Git bash )
+1) Docker Images<br>   
+Combinations of binaries / libraries which are necessary for one software application.<br>
+2) Docker Containers<br>  
+When image is installed and in comes into running condition, it is called container.<br>
+3) Docker Host<br>
+Machine on which docker is installed, is called as Docker host.<br>
+4) Docker Client<br>
+Terminal used to run docker run commands ( Git bash )<br>
 
 On linux machine, git bash will work like docker client.
 
 # Listing out important commands in Docker
-Docker Commands
----------------
-Working on Images :
--------------------------
-1) To download a docker image 
+Docker Commands<br>
+Working on Images :<br>
+1) To download a docker image<br> 
    docker pull <image_name> 
 
-2) To see the list of docker images 
-  docker image ls 
-  (or) 
-  docker images 
+2) To see the list of docker images<br> 
+  docker image ls<br> 
+  (or)<br> 
+  docker images<br> 
 
-3) To delete a docker image from docker host 
-  docker rmi <image_name/image_id> 
+3) To delete a docker image from docker host<br> 
+  docker rmi <image_name/image_id><br> 
 
-4) To upload a docker image into docker hub 
-   docker push <image_name> 
+4) To upload a docker image into docker hub<br> 
+   docker push <image_name><br> 
 
-5) To tag an image 
-docker tag   <image_name>   ipaddress_of_local_registry:5000/image_name 
+5) To tag an image<br> 
+docker tag   <image_name>   ipaddress_of_local_registry:5000/image_name<br> 
 
-6) To build an image from a customised container 
-  docker   <commit  container_name/container_id>     <new_image_name> 
+6) To build an image from a customised container<br> 
+  docker   <commit  container_name/container_id>     <new_image_name><br> 
 
-7) To create an image from docker file 
-   docker build -t    <new_image_name> 
+7) To create an image from docker file<br> 
+   docker build -t    <new_image_name><br> 
 
-8) To search for a docker image 
-   docker search <image_name> 
+8) To search for a docker image<br> 
+   docker search <image_name><br> 
 
-9)  To delete all images that are not attached to containers 
-   docker system prune -a 
+9)  To delete all images that are not attached to containers<br> 
+   docker system prune -a<br> 
 
-Working on containers
------------------------------
+# Working on containers
 
-10) To see the list of all running continers 
-   docker  container  ls 
 
-11) To see the list of running and stopped containers 
-    docker   ps -a 
+10) To see the list of all running continers<br> 
+   docker  container  ls<br> 
 
-12) To start a container 
-    docker  start  container_name/container_id 
+11) To see the list of running and stopped containers<br> 
+    docker   ps -a<br> 
 
-13) To stop a running container 
-    docker stop   container_name/container_id 
+12) To start a container<br> 
+    docker  start  container_name/container_id<br> 
 
-14) To restart a running container 
-   docker restart container_name/container_id 
-         To restart after 10 seconds 
-   docker restart  -t  10  container_name/container_id 
+13) To stop a running container<br> 
+    docker stop   container_name/container_id<br> 
 
-15) To delete a stopped container 
-    docker  rm  container_name/container_id
+14) To restart a running container<br> 
+   docker restart container_name/container_id<br> 
+         To restart after 10 seconds<br> 
+   docker restart  -t  10  container_name/container_id<br> 
 
-16) To delete a running container 
-    docker  rm  -f  container_name/container id 
+15) To delete a stopped container<br> 
+    docker  rm  container_name/container_id<br>
 
-17) To stop all running containers 
-    docker stop $(docker ps -aq) 
+16) To delete a running container<br> 
+    docker  rm  -f  container_name/container id<br> 
 
-18) To restart all containers 
-    docker restart $(docker ps -aq) 
+17) To stop all running containers<br> 
+    docker stop $(docker ps -aq)<br> 
 
-19) To remove all stopped containers 
-    docker rm $(docker ps -aq) 
+18) To restart all containers<br> 
+    docker restart $(docker ps -aq)<br> 
 
-20) To remove all contianers(running and stopped) 
-    docker rm -f  $(docker ps -aq) 
+19) To remove all stopped containers<br> 
+    docker rm $(docker ps -aq)<br> 
 
-21) To see the logs generated by a container 
-   docker logs container_name/container_id 
+20) To remove all contianers(running and stopped)<br> 
+    docker rm -f  $(docker ps -aq)<br> 
 
-22) To see the ports used by a container 
-   docker port container_name/container_id 
+21) To see the logs generated by a container<br> 
+   docker logs container_name/container_id<br> 
 
-23) To get detailed info about a container 
-   docker inspect container_name/container_id 
+22) To see the ports used by a container<br> 
+   docker port container_name/container_id<br> 
 
-24) To go into the shell of a running contianer which is moved into background 
-   docker attach container_name/container id 
+23) To get detailed info about a container<br> 
+   docker inspect container_name/container_id<br> 
 
-25) To execute anycommand in a container 
-   docker exec -it container_name/container_id command
-   Eg: To launch the bash shell in a contianer 
-   docker exec -it container_name/container_id    bash 
+24) To go into the shell of a running contianer which is moved into background<br> 
+   docker attach container_name/container id<br> 
 
-26) To create a container from a docker image  ( imp )
-     docker run image_name   
+25) To execute anycommand in a container<br> 
+   docker exec -it container_name/container_id command<br>
+   Eg: To launch the bash shell in a contianer<br> 
+   docker exec -it container_name/container_id    bash<br> 
+
+26) To create a container from a docker image  ( imp )<br>
+     docker run image_name<br>   
 
 
 # Run command options in Docker
 
--it 	for opening an interactive terminal in a container 
+-it 	for opening an interactive terminal in a container<br> 
 
---name 	Used for giving a name to a container 
+--name 	Used for giving a name to a container<br> 
 
--d 	Used for running the container in detached mode as a background process 
+-d 	Used for running the container in detached mode as a background process<br> 
 
--e 	Used for passing environment varaibles to the container 
+-e 	Used for passing environment varaibles to the container<br> 
 
--p 	Used for port mapping between port of container with the dockerhost port.
+-p 	Used for port mapping between port of container with the dockerhost port.<br>
 
- -P 	Used for automatic port mapping ie, it will map the internal port of the container 
-                with some port on host machine. 
-               This host port will be some number greater than 30000 
+ -P 	Used for automatic port mapping ie, it will map the internal port of the container<br> 
+                with some port on host machine.<br> 
+               This host port will be some number greater than 30000<br> 
 
--v 	Used for attaching a volume to the container 
+-v 	Used for attaching a volume to the container<br> 
 
---volume-from 	 Used for sharing volume between containers 
+--volume-from 	 Used for sharing volume between containers<br> 
 
---network 	Used to run the contianer on a specific network 
+--network 	Used to run the contianer on a specific network<br> 
 
---link 		Used for linking the container for creating a multi container architecture 
+--link 		Used for linking the container for creating a multi container architecture<br> 
 
---memory  	Used to specify the maximum amount of ram that the container can use 
+--memory  	Used to specify the maximum amount of ram that the container can use<br> 
 
 # Downloading the image and creating container:
 
