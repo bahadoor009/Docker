@@ -852,64 +852,64 @@ docker run -it   myubuntu<br>
 
 ---------------------------------------------------------------------------------------------------------<br>
 
-Lets perform version controlling  in docker file
----------------------------------------------------------
+Lets perform version controlling  in docker file<br>
 
 
-# mkdir  docker 
-# mv dockerfile  docker
-# cd docker
-# ls
+
+mkdir  docker <br>
+mv dockerfile  docker<br>
+cd docker<br>
+ls<br>
 
 
-docker# git init
-docker# git status  
-docker# git add .
+docker# git init<br>
+docker# git status <br> 
+docker# git add .<br>
 
-docker# git commit  -m "a"
+docker# git commit  -m "a"<br>
 
-( we get error we need to config git)
-docker# git config --global user.name "sunildevops77"
-docker# git config --global user.email "sunildevops77@gmail.com"
+( we get error we need to config git)<br>
+docker# git config --global user.name "bahadoor009"<br>
+docker# git config --global user.email "bahadoor009@gmail.com"<br>
 
-Now, run the above commit command  ( git commit )
+Now, run the above commit command  ( git commit )<br>
 
-docker# vim dockerfile  ( lets make some changes add another RUN command )
+docker# vim dockerfile  ( lets make some changes add another RUN command )<br>
 
-FROM ubuntu
-MAINTAINER logiclabs
+FROM ubuntu<br>
+MAINTAINER logiclabs<br>
 
-RUN apt-get update
-RUN apt-get install -y git
-RUN apt-get install -y default-jdk
+RUN apt-get update<br>
+RUN apt-get install -y git<br>
+RUN apt-get install -y default-jdk<br>
 
 :wq
 
-docker# git add .
-docker# git commit  -m "b"
+docker# git add .<br>
+docker# git commit  -m "b"<br>
 
-Now lets see the docker file
-# vim dockerfile  ( we see the latest one )
+Now lets see the docker file<br>
+vim dockerfile  ( we see the latest one )<br>
 
-Now, I want to have previous version
-# git log  --oneline  (  to see the list of all the commits)
+Now, I want to have previous version<br>
+git log  --oneline  (  to see the list of all the commits)<br>
 
-We want to move to "a" commit  ( take note of commit id )
+We want to move to "a" commit  ( take note of commit id )<br>
 
-# git reset --hard  10841c3
-
-
-
-
-Now lets see the docker file
-# vim dockerfile  ( we see the old one )
-
-+++++++++++++++++++++++++++++++++++
+git reset --hard  10841c3<br>
 
 
 
-Cache busting
-------------------
+
+Now lets see the docker file<br>
+vim dockerfile  ( we see the old one )<br>
+
+---------------------------------------------------------------------------------------------------
+
+
+
+# Cache busting
+
 Whenever an image is build from a dockerfile, docker reads its memory and checks which instructions were already executed. 
 These steps will not be reexecuted. 
 It will execute only the latest instructions. This is a time saving mechanism provided by docker. 
@@ -917,53 +917,49 @@ It will execute only the latest instructions. This is a time saving mechanism pr
 But, the disadvantage is, we can end up installing software packages  from a repository which is updated long time back. 
 
 
-Ex:
+Ex:<br>
 
-# cd docker
-# vim dockerfile
+cd docker<br>
+vim dockerfile<br>
 
-Lets just add one more instruction
+Lets just add one more instruction<br>
 
-FROM ubuntu
-MAINTAINER logiclabs
+FROM ubuntu<br>
+MAINTAINER logiclabs<br>
 
-RUN apt-get update
-RUN apt-get install -y git
-RUN apt-get install -y tree                 
-
-
-:wq
-
-
-Lets build an image
-# docker build -t myubuntu  .
-
-
-( Observe the output,  Step 2, 3, 4 is using cache.  Only step 5 is executed freshly )
-
-Advantage: time saving mechanism
+RUN apt-get update<br>
+RUN apt-get install -y git<br>
+RUN apt-get install -y tree<br>                 
 
 
 
-Disadvantage : Lets say, you are running after 4 months, We are installing tree from apt which is updated long time back. )
+
+Lets build an image<br>
+# docker build -t myubuntu  .<br>
 
 
-TO avoid this disadvanatge we use cache busting
------------------------------------------------------
-Note: cache busting is implemented using && symbol.
-Which ever statement in the docker file has &&  will be re-executed. 
+( Observe the output,  Step 2, 3, 4 is using cache.  Only step 5 is executed freshly )<br>
 
-# vim dockerfile
+Advantage: time saving mechanism<br>
 
-FROM ubuntu
-MAINTAINER logiclabs
+Disadvantage : Lets say, you are running after 4 months, We are installing tree from apt which is updated long time back. )<br>
 
-RUN apt-get update && apt-get install -y git tree
 
-:wq
+To avoid this disadvanatge we use cache busting<br>
 
-Lets build an image
-# docker build -t myubuntu .
+Note: cache busting is implemented using && symbol.<br>
+Which ever statement in the docker file has &&  will be re-executed. <br>
+
+vim dockerfile<br>
+
+FROM ubuntu<br>
+MAINTAINER logiclabs<br>
+
+RUN apt-get update && apt-get install -y git tree<br>
+
+
+Lets build an image<br>
+docker build -t myubuntu .<br>
 
 ( Observe the output, step 3  - It is not using cache )
 
