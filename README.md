@@ -45,11 +45,11 @@ We should be comformatable with four terms:<br>
 
 1) Docker Images:<br>
 Combinations of binaries/libraries which are necessary for one software application.<br>
-3) Docker Containers:<br>
+2) Docker Containers:<br>
 When image is installed and in comes into running condition, it is called container.<br>
-5) Docker Host:<br>
+3) Docker Host:<br>
 Machine on which docker is installed, is called as Docker host.<br>
-7) Docker Client:<br>
+4) Docker Client:<br>
 Terminal used to run docker run commands ( Git bash )<br>
 
 On linux machine, git bash will work like docker client.
