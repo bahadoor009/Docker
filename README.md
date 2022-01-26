@@ -742,7 +742,42 @@ cd /var/lib/docker/volumes/e22a9b39372615727b964151b6c8108d6c02b13114a3fcce255df
 ls  ( we can see all the files )<br>
 
 
+# Creating customized docker images
 
+
+Whenever docker container is deleted, all the softwares that we have installed within the container will also be deleted.<br>
+
+
+
+If we can save the container as an image, then we can preserve the softwares.<br>
+
+
+This creation of customized docker images can be done in two ways.<br>
+1) using docker commit command<br>
+2) using docker file<br>
+
+
+Using docker commit<br>
+docker run  --name c1 -it  ubuntu<br>
+
+Update apt repository<br>
+
+apt-get update<br>
+apt-get install git<br>
+ 
+To check the git<br>
+git  --version<br>
+exit<br>
+
+To save the container as image (snapshot)<br>
+docker commit   c1   myubuntu<br>
+
+To see the list of images<br>
+docker images  ( you can see the image which you have created )<br>
+
+Now lets run the image which we have created<br>
+docker run --name c2 -it   myubuntu<br>
+git --version  ( git is pre installed )<br>
 
 
 
