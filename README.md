@@ -20,6 +20,17 @@
 - Creating CI-CD Environment using Docker
 - Creating testing environment using Docker
 - Installing Docker compose
+- Examples of docker-compose file
+- Understanding Docker volume
+- Types of docker volume
+- Creating customized docker images
+- Understanding Keywords of Docker file
+- Working with Docker file
+- Version controlling on Docker file
+- Cache Busting
+- Working with Registry
+
+
 
 
 
