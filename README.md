@@ -29,6 +29,10 @@
 - Version controlling on Docker file
 - Cache Busting
 - Working with Registry
+- Understanding the default process of the container
+- Changing the default process of the container
+- Container Orchestration
+- Docker swarm
 
 
 
