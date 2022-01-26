@@ -233,7 +233,7 @@ docker run --name  appserver  -P  -d  nginx<br>
 To start mysql  as container, open interactive terminal in it, create a sample table.<br>
 
 docker run  --name  mydb  -d  -e MYSQL_ROOT_PASSWORD=sunil  mysql:5<br>
-To chech<br>
+To check<br>
 docker container ls<br>
 
 I want to open bash terminal of  mysql<br>
@@ -242,6 +242,183 @@ docker  exec   -it  mydb  bash<br>
 To connect to mysql database<br>
 mysql  -u  root  -p<br> 
 
+# Multi container architecture using docker
+This can be done in  2  ways<br>
+1) --link<br>
+2) docker-compose<br>
+
+EXample 1: Start two busybox containers and create link between them<br>
+
+Create 1st busy box container<br>
+docker run --name c10 -it   busybox<br>
+How to come out of the container without exit<br>
+( ctrl + p  + q)<br>
+
+Create 2nd busy box container  and establish link to c1 container<br>
+docker run --name  c20 --link c10:c10-alias  -it  busybox   ( c10-alias  is  alias name)<br>
+
+How to check  link is established for not?<br>
+ping c10<br>
+
+Ctrl +c  ( to come out from ping )<br>
+(ctrl + p  + q)<br>
+
+Example 2: Creating development environment using docker<br>
+------------------------------------------------------------<br>
+Start mysql as container and link it with wordpress container.<br>
+
+Developer should be able to create wordpress website<br>
+
+
+1) To start mysql as container<br>
+docker run --name mydb  -d  -e  MYSQL_ROOT_PASSWORD=sunil  mysql:5<br>
+
+( if container is already in use , remove it using docker rm -f  mydb)<br>
+
+Check whether the container is running or not.<br>
+docker container ls<br>
+
+2) To start wordpress container<br>
+docker run  --name mysite  -d  -p 5050:80 --link mydb:mysql  wordpress<br>
+
+Check wordpress installed or not.<br>
+Open browser<br> 
+public_ip:5050<br>
+18.138.58.3:5050<br>
+
+# Create LAMP  Architecture using docker
+
+L -- linux<br>
+A -- apache tomcat<br>
+M -- mysql<br>
+P --  php<br>
+(Linux os we already have)<br>
+1) To start mysql as container<br>
+docker run --name mydb  -d  -e  MYSQL_ROOT_PASSWORD=sunil  mysql:5<br>
+
+
+2) To start tomcat as container<br>
+docker run  --name  apache  -d  -p 6060:8080  --link mydb:mysql  tomcat<br>
+
+
+To see the list of containers<br>
+docker container ls<br>
+
+To check if tomcat is linked with mysql<br>
+docker inspect apache      ( apache is the name of the container)<br>
+
+
+3) To start php as container<br>
+docker  run --name php  -d --link apache:tomcat  --link mydb:mysql    php<br>
+
+
+# Create CI-CD environment, where jenkins container is linked with two tomcat containers.<br>
+
+Lets delete all the container<br>
+docker rm  -f  $(docker ps -aq)<br>
+
+To start jenkins as a container<br>
+docker run  --name  devserver  -d -p 7070:8080 jenkins/jenkins<br>
+
+To check jenkins is running or not?<br>
+Open browser<br>
+public_ip:7070<br>
+
+We need two tomcat containers  ( qa server and prod server)<br>
+docker run --name  qaserver  -d  -p 8080:8080 --link devserver:jenkins tomee<br>
+
+To check the tomcat   use public_ip but port number will be 8080<br>
+docker run --name  prodserver  -d  -p 9090:8080 --link devserver:jenkins tomcat<br>
+
+
+# Creating testing environment using docker:<br>
+
+Create selenium hub container, and link it with two node containers. One node with firefox installed, another node with chrome installed. Tester should be able to run selenuim automation programs for testing the application on multiple browsers.<br>
+
+Search for selenium:<br>
+We have a image -  selenium/hub<br>
+
+To start selenium/hub as container<br>
+docker run --name  hub  -d -p 4444:4444   selenium/hub<br>
+
+
+In hub.docker.com<br>
+we also have-  selenium/node-chrome-debug    ( It is ubuntu container with chrome)<br>
+
+To start it as a container and link to hub ( previous container)<br>
+docker run --name chrome  -d -p 5901:5900  --link hub:selenium   selenium/node-chrome-debug<br>
+
+In hub.docker.com<br>
+we also have-  selenium/node-firefox-debug<br>
+
+To start it as a container and link to hub ( It is ubuntu container with firefox)<br>
+docker run --name firefox  -d -p 5902:5900  --link hub:selenium   selenium/node-firefox-debug<br>
+
+To see the list of container<br>
+docker container ls<br>
+
+Note: firefox and chrome containers are GUI containers.<br>
+To see the GUI interface to chrome / firefox container<br>
+
+Download and install vnc viewer<br>
+In VNC viewer search bar<br>
+public_ip_dockerhost:5901<br>
+
+Password - secret<br>
+
+------------------------------------------------------------------------------------
+
+
+All the commands we learnt till date are adhoc commands.<br>
+
+In the previous usecase we have installed two containers ( chrome and firefox)<br>
+Lets say you need 80 containers?<br>
+Do we need to run 80 commands?<br>
+ 
+Instead of 80 commands, we can use docker compose<br>
+
+
+# Docker compose
+
+This is a feature of docker using which we can create multicontainer architecture using yaml files. This yaml file contains information about the  containers that we want to launch and how they have to be linked with each other.Yaml is a file format. It is not a scripting language.
+Yaml will store the data in key value pairs<br>
+Lefthand side - Key<br>
+Righthand side - Value<br>
+Yaml file is space indented.<br>
+
+Sample Yaml file<br>
+-------------------------<br>
+
+bahadoorsoft:<br>
+ trainers:<br>
+  bahadoor: Devops<br>
+  daya: Python<br>
+ Coordinators:<br>
+  sai: Devops<br>
+  bahadoor: AWS<br>
+...<br>
+
+
+bahadoorsoft -- root  element<br>
+
+To validate the abvove Yaml file<br>
+Open  http://www.yamllint.com/<br>
+Paste the above code  -- Go button<br>
+
+------------------------------------------------------------------------------------------------------<br>
+
+# Installing Docker compose
+
+1) Open https://docs.docker.com/compose/install/<br>
+2) Go to linux section<br>
+Copy and pase the below two commands<br>
+
+sudo curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose<br>
+sudo chmod +x /usr/local/bin/docker-compose<br>
+	
+How to check docker compose is installed or not?<br>
+
+docker-compose  --version<br>
 
 
 
