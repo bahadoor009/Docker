@@ -1537,3 +1537,203 @@ Manager # docker  node ls   ( we can see manager, worker1  and worker 2)<br>
 
 
 
+
+
+Load balancing:<br>
+Each docker container is designed to withstand a specific  user load.<br>
+When the load increases, we can replica containers in docker swarm and distribute the load.<br>
+
+Ex: Start tomcat in docker swarm with 5 replicas and name it as webserver.<br>
+
+Manager# docker service create --name webserver -p 9090:8080 --replicas 5  tomee<br>
+
+( 5 conainers with the same service, distributed load in 3 machines)<br>
+
+
+How to see where thay are running?<br>
+Manager# docker service  ps  webserver<br>
+
+Lets take the note<br>
+Manager - 1 container<br>
+Worker1 - 2 container<br>
+Worker2 - 2 container<br>
+
+--------------------------------------------------------------------------------------------------------------------------
+Note: Only one tomcat is running and load is shrared to 3 machines<br>
+
+Lets check<br>
+public_ip_manager:9090  ( Will show tomcat page )<br>
+public_ip_worker1:9090  ( Will show tomcat page )<br>
+public_ip_worker2:9090  ( Will show tomcat page )<br>
+
+
+Ex 2:  Start mysql in docker swarm with 3 replicas.<br>
+
+Manager# docker service create --name mydb --replicas 3   -e MYSQL_ROOT_PASSWORD=sunil mysql:5<br>
+
+How to see where thay are running?<br>
+Manager# docker service  ps  mydb<br>
+
+To know the total no of services running in docker swarm<br>
+Manager# docker service ls<br>
+
+If you delete a container, it will create another container.<br>
+
+Now,<br>
+Manager# docker service  ps  mydb<br>
+
+We can see one container is running in  Manager machine<br>
+I want to delete the container which is running in manager<br>
+
+Manager# docker container ls<br>
+( we can see 1 mysql container, 1 tomcat container )<br>
+
+Take note of the container_id  of mysql<br>
+67238f47bc60<br>
+
+To delete the container<br>
+docker rm -f   67238f47bc60<br>
+
+
+
+Now lets check the mydb service<br>
+docker service  ps  mydb ( we can see one service is failed, automatically 2nd service is started)<br>
+At anypoint of time, 3 container will be running.<br>
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Scaling of containers: <br>
+
+When business requirement increases, we should be able to increase the no of replicas.<br>
+Similarly, we should also be able to decrease the replica count based on business requirement. This scaling should be done without any downtime.<br>
+ 
+Ex 3:  Start nginx with 5 replicas, later scale the services to 10.<br>
+
+
+docker service  create  --name appserver -p 8080:80  --replicas 5 nginx<br>
+
+docker service ps appserver<br>
+
+Command to scale<br>
+docker service scale  appserver=10<br>
+
+To check<br>
+docker service ps appserver<br>
+
+Now I want only two containers<br>
+docker service scale  appserver=2<br>
+
+To check<br>
+docker service ps appserver<br>
+
+
+To remove a node from the docker swarm<br>
+Two ways<br>
+1) Manager can drain<br>
+2) Node can leave<br>
+
+
+
+
+To see the list of nodes<br>
+docker node ls<br>
+
+docker node update --availability drain  Worker1<br>
+
+All the container running in Worker1 , will be migrated to Worker2 or manager.<br>
+
+docker service ps mydb<br>
+docker node ls<br>
+
+To add the node<br>
+docker node update --availability active  Worker1<br>
+
+docker node ls<br>
+
+
+2nd Way  ( Node can leave )<br>
+
+Lets Connect to worker2 from git bash<br>
+
+Worker2# docker swarm leave<br>
+
+------------------------------------------------------------------------------------------------------<br>
+
+To see the list of services<br>
+docker service ls<br>
+
+To delete the services<br>
+Manager# docker service rm appserver mydb webserver<br>
+
+Rolling Updates<br>
+
+The services running in docker swarm, can be updated to any other version<br>
+without any downtime. 
+This is perfomed by docker swarm by updating one replica after another. This is called as rolling update.<br>
+
+Ex: Create redis 3 service with 6 replicas. Update from redis 3 to redis 4 version.<br>
+
+docker service create --name myredis --replicas 6 redis:3<br>
+
+To check the replicas<br>
+docker service ps myredis<br>
+
+To update<br>
+docker service update --image redis:4 myredis<br>
+
+docker service ps myredis<br> 
+
+I want to display running containers not shutdown containers<br>
+
+docker service ps myredis | grep Shutdown  ( We get shutdown container )<br>
+docker service ps myredis | grep -v Shutdown ( -v used for inverse operation )<br>
+
+Performing rolling rollback , to downgrade to redis:3 version<br>
+
+docker service update --rollback myredis<br>
+
+To check redis:3 is running with 6 replicas and other version are shutdown.<br>
+docker service ps myredis<br>
+	
+
+To add new nodes, in future, we need to docker swarm join command.<br>
+To generate the command<br>
+docker swarm  join-token  worker  ( We will get the command )<br>
+
+ docker swarm join --token SWMTKN-1-0etsmfa26vreeytq278q8ohhi73il7j1lpnrzzlowuld1r8yex-9x04pjmiq85jxjzjayzlglh1c 172.31.27.151:2377<br>
+
+
+To add a new machine as a manager<br>
+
+docker swarm  join-token  manager<br>
+
+docker swarm join --token SWMTKN-1-5wbamgr8x7gxabwtlm1j1i91bm5ilzotgna6bc0edubtwtjxi1-3jmzi67qdn5aawvielkcng2e4 172.31.34.112:2377<br>
+
+If there are two managers, one will be leader<br>
+
+docker node ls   ( we can see who is the leader )<br>
+Decision of which is machine should be leader is automatic.<br>
+
+If one manager goes down, other manager automatically become leader.<br>
+
+To promote worker1 as a manager node<br>
+docker node promote Worker1<br>
+
+To demote Worker1 and make him back as a worker<br>
+docker node demote Worker1<br>
+
+# ----------------------------------------BINGO..!!--------------------------------------<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
