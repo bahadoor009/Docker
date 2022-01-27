@@ -1722,7 +1722,7 @@ docker node promote Worker1<br>
 To demote Worker1 and make him back as a worker<br>
 docker node demote Worker1<br>
 
-# ----------------------------------------BINGO..!!--------------------------------------<br>
+# -------------------BINGO..!!---------------------
 
 
 
