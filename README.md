@@ -990,7 +990,7 @@ Take a note of the source path<br>
 
 
 Lets remove all the container<br>
-docker rm -f  c1  c2  c3
+docker rm -f  c1  c2  c3<br>
 
 Lets go to the source path<br>
 cd /var/lib/docker/volumes/e22a9b39372615727b964151b6c8108d6c02b13114a3fcce255df0cee7609e15/_data<br>
@@ -1033,6 +1033,269 @@ docker images  ( you can see the image which you have created )<br>
 Now lets run the image which we have created<br>
 docker run --name c2 -it   myubuntu<br>
 git --version  ( git is pre installed )<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Using docker file<br>
+
+This is a simple text file, which uses  predefinied keywords for creating customized docker images.<br>
+
+Key words used in docker file  ( case sensitive )<br>
+
+1) FROM  --  used to specify the base image from which the docker file has to be created.<br>
+
+2) MAINTAINER -- This represents name of the organization or the author who created this docker file.<br>
+
+3) CMD   -- This is used to specify the initial command that should be executed when the container starts.<br>
+
+4) ENTRYPOINT - used to specify the default process that should be executed when container starts. It can also be used for accepting arguments from the CMD instruction.<br>
+
+5) RUN  -- Used for running linux commands within the container. It is generally helpful for installing the software in the container.<br>
+
+6) USER  --      used to specify the default user who should login into the container.<br>
+
+7) WORKDIR --  Used to specify default working directory in the container<br>
+
+8) COPY  --  Copying the files from the host machine to the container.<br>
+
+9) ADD  -- Used for copying files  from host to container, it can also be used for downloading files from remote servers.<br>
+
+10) ENV  --  used for specifying the environment variables that should be passed to the container.<br>
+
+EXPOSE -- Used to specify the internal port of the container<br>
+VOLUME  --  used to specify the default volume that should be attached to the container.<br>
+LABEL  --  used for giving label to the container<br>
+STOPSIGNAL  -- Used to specify the key sequences that have to be passed in order to stop the container.<br>
+
+
+Create a dockerfile by taking nginx as the base image and specify the maintainer as logiclabs. Construct an image from the dockerfile.<br>
+
+Creating customized docker images by using docker file.<br>
+
+$ sudo su -<br>
+vim dockerfile<br>
+
+FROM nginx<br>
+MAINTAINER logiclabs<br>
+
+TO build an image from the dockerfile<br>
+docker build -t  mynginx .<br> 
+
+( t stands for tag, .  stands for current working dir mynginx is the new image name    )<br>
+
+
+
+
+To see the image<br>
+docker images<br>
+
+------------------------------------------------------------------------------------------------------------------
+
+
+When ever i start my container, i want a program to get executed.<br>
+vim dockerfile<br>
+
+FROM centos<br>
+MAINTAINER logiclabs<br>
+CMD ["date"]<br>
+
+
+TO build an image from the dockerfile<br>
+docker build -t  mycentos  .<br> 
+
+To see the image<br>
+docker images<br>
+
+Running conainer from the image<br>
+docker run -it   mycentos<br>
+
+-----------------------------------------------------------------------------------------------------------------------<br>
+
+In one docker file, we can have one CMD instruction.<br>
+If we give two  CMD instruction, it executes the latest one<br>
+Lets try<br>
+
+
+
+vim dockerfile<br>
+FROM centos<br>
+MAINTAINER logiclabs<br>
+CMD ["date"]<br>
+CMD ["ls", "-la"]<br>
+
+:wq<br>
+
+docker build -t  mycentos .<br> 
+
+docker run -it   mycentos<br>
+( Observation, we get ls -la output )<br>
+
+
+-------------------------------------------------------------------------------------------------------------------------<br>
+In ubuntu container, I want to install git in it.<br>
+
+
+Lets remove the docker file<br>
+rm dockerfile<br>
+vim dockerfile<br>
+
+FROM ubuntu<br>
+MAINTAINER logiclabs<br>
+RUN apt-get update<br>
+RUN apt-get install -y git<br>
+
+:wq<br>
+
+
+Note:  CMD  -- will run  when container starts.<br>
+       RUN  --  will executed when image is created.<br>
+
+
+docker build -t  myubuntu .<br> 
+
+Lets see the images list and space consumed by  our  image<br>
+docker images<br>
+docker run -it   myubuntu<br>
+git  --version<br>
+exit<br>
+
+
+--------------------------------------------------------------------------------------------------------------------------<br>
+
+Lets perform version controlling  in docker file<br>
+
+
+
+mkdir  docker <br>
+mv dockerfile  docker<br>
+cd docker<br>
+ls<br>
+
+
+docker# git init<br>
+docker# git status<br>  
+docker# git add .<br>
+
+docker# git commit  -m "a"<br>
+
+( we get error we need to config git)<br>
+docker# git config --global user.name "sunildevops77"<br>
+docker# git config --global user.email "sunildevops77@gmail.com"<br>
+
+Now, run the above commit command  ( git commit )<br>
+
+docker# vim dockerfile  ( lets make some changes add another RUN command )<br>
+
+FROM ubuntu<br>
+MAINTAINER logiclabs<br>
+
+RUN apt-get update<br>
+RUN apt-get install -y git<br>
+RUN apt-get install -y default-jdk<br>
+
+:wq<br>
+
+docker# git add .<br>
+docker# git commit  -m "b"<br>
+
+Now lets see the docker file<br>
+vim dockerfile  ( we see the latest one )<br>
+
+Now, I want to have previous version<br>
+git log  --oneline  (  to see the list of all the commits)<br>
+
+We want to move to "a" commit  ( take note of commit id )<br>
+
+git reset --hard  10841c3<br>
+
+
+
+
+Now lets see the docker file<br>
+vim dockerfile  ( we see the old one )<br>
+
+----------------------------------------------------------------------------------------------------------------------<br>
+
+
+
+# Cache busting
+
+Whenever an image is build from a dockerfile, docker reads its memory and checks which instructions were already executed. 
+These steps will not be reexecuted. 
+It will execute only the latest instructions. This is a time saving mechanism provided by docker. 
+
+But, the disadvantage is, we can end up installing software packages  from a repository which is updated long time back. 
+
+
+Ex:
+
+# cd docker
+# vim dockerfile
+
+Lets just add one more instruction
+
+FROM ubuntu
+MAINTAINER logiclabs
+
+RUN apt-get update
+RUN apt-get install -y git
+RUN apt-get install -y tree                 
+
+
+:wq
+
+
+Lets build an image
+# docker build -t myubuntu  .
+
+
+( Observe the output,  Step 2, 3, 4 is using cache.  Only step 5 is executed freshly )
+
+Advantage: time saving mechanism
+
+
+
+Disadvantage : Lets say, you are running after 4 months, We are installing tree from apt which is updated long time back. )
+
+
+TO avoid this disadvanatge we use cache busting
+-----------------------------------------------------
+Note: cache busting is implemented using && symbol.
+Which ever statement in the docker file has &&  will be re-executed. 
+
+# vim dockerfile
+
+FROM ubuntu
+MAINTAINER logiclabs
+
+RUN apt-get update && apt-get install -y git tree
+
+:wq
+
+Lets build an image
+# docker build -t myubuntu .
+
+( Observe the output, step 3  - It is not using cache )
+
+
 
 
 
