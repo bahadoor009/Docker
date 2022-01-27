@@ -1,4 +1,4 @@
-# Docker
+# Learning Objectives
 
 - What is Docker?
 - Containerization vs virtualization
