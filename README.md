@@ -1238,62 +1238,62 @@ vim dockerfile  ( we see the old one )<br>
 
 # Cache busting
 
-Whenever an image is build from a dockerfile, docker reads its memory and checks which instructions were already executed. 
+Whenever an image is build from a dockerfile, docker reads its memory and checks which instructions were already executed. <br>
 These steps will not be reexecuted. 
-It will execute only the latest instructions. This is a time saving mechanism provided by docker. 
+It will execute only the latest instructions. This is a time saving mechanism provided by docker. <br>
 
-But, the disadvantage is, we can end up installing software packages  from a repository which is updated long time back. 
-
-
-Ex:
-
-# cd docker
-# vim dockerfile
-
-Lets just add one more instruction
-
-FROM ubuntu
-MAINTAINER logiclabs
-
-RUN apt-get update
-RUN apt-get install -y git
-RUN apt-get install -y tree                 
+But, the disadvantage is, we can end up installing software packages  from a repository which is updated long time back. <br>
 
 
-:wq
+Ex:<br>
+
+cd docker<br>
+vim dockerfile<br>
+
+Lets just add one more instruction<br>
+
+FROM ubuntu<br>
+MAINTAINER logiclabs<br>
+
+RUN apt-get update<br>
+RUN apt-get install -y git<br>
+RUN apt-get install -y tree <br>                
 
 
-Lets build an image
-# docker build -t myubuntu  .
+:wq<br>
 
 
-( Observe the output,  Step 2, 3, 4 is using cache.  Only step 5 is executed freshly )
-
-Advantage: time saving mechanism
-
+Lets build an image<br>
+docker build -t myubuntu  .<br>
 
 
-Disadvantage : Lets say, you are running after 4 months, We are installing tree from apt which is updated long time back. )
+( Observe the output,  Step 2, 3, 4 is using cache.  Only step 5 is executed freshly )<br>
+
+Advantage: time saving mechanism<br>
 
 
-TO avoid this disadvanatge we use cache busting
------------------------------------------------------
-Note: cache busting is implemented using && symbol.
-Which ever statement in the docker file has &&  will be re-executed. 
 
-# vim dockerfile
+Disadvantage : Lets say, you are running after 4 months, We are installing tree from apt which is updated long time back. )<br>
 
-FROM ubuntu
-MAINTAINER logiclabs
 
-RUN apt-get update && apt-get install -y git tree
+To avoid this disadvanatge we use cache busting:<br>
 
-:wq
+Note: cache busting is implemented using && symbol.<br>
+Which ever statement in the docker file has &&  will be re-executed.<br> 
 
-Lets build an image
-# docker build -t myubuntu .
+vim dockerfile<br>
 
-( Observe the output, step 3  - It is not using cache )
+FROM ubuntu<br>
+MAINTAINER logiclabs<br>
+
+RUN apt-get update && apt-get install -y git tree<br>
+
+:wq<br>
+
+Lets build an image<br>
+docker build -t myubuntu .<br>
+
+( Observe the output, step 3  - It is not using cache )<br>
 
 
 
